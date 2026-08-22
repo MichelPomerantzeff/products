@@ -4,15 +4,15 @@ import { Outlet, redirect } from "react-router";
 import type { Route } from "./+types/auth-guard";
 
 export async function loader(args: Route.LoaderArgs) {
-	const { userId } = await getAuth(args);
+  const { userId } = await getAuth(args);
 
-	if (!userId) {
-		throw redirect("/sign-in");
-	}
+  if (!userId) {
+    throw redirect("/sign-in");
+  }
 
-	return null;
+  return null;
 }
 
 export default function AuthGuard() {
-	return <Outlet />;
+  return <Outlet />;
 }
