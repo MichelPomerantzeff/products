@@ -12,6 +12,7 @@ A modern, production-ready template for building full-stack React applications u
 - 🔄 Data loading and mutations
 - 🔒 TypeScript by default
 - 🎉 TailwindCSS for styling
+- 🧹 [Biome](https://biomejs.dev/) for linting and formatting
 - 📖 [React Router docs](https://reactrouter.com/)
 
 ## Getting Started
@@ -77,6 +78,18 @@ Make sure to deploy the output of `npm run build`
 │   ├── client/    # Static assets
 │   └── server/    # Server-side code
 ```
+
+## Linting & Formatting
+
+This template uses [Biome](https://biomejs.dev/) to lint and format the codebase. Run it with:
+
+```bash
+npm run lint-format
+```
+
+Configuration lives in [`biome.json`](./biome.json), including `css.parser.tailwindDirectives`, which teaches Biome to parse Tailwind-specific at-rules like `@theme` and `@apply` in [`app/app.css`](./app/app.css) instead of flagging them as syntax errors.
+
+If you use VS Code, [`.vscode/settings.json`](./.vscode/settings.json) sets Biome as the default formatter with format-on-save, and disables the built-in CSS validator's `unknownAtRules` warning so it doesn't also flag Tailwind directives.
 
 ## Styling
 
