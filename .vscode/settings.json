@@ -1,9 +1,9 @@
 {
-  "editor.defaultFormatter": "biomejs.biome",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports": "explicit"
-  },
-  "css.lint.unknownAtRules": "ignore"
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports": "explicit"
+	},
+	"css.lint.unknownAtRules": "ignore"
 }
