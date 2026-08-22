@@ -1,5 +1,6 @@
+import { Show, UserButton, useUser } from "@clerk/react-router";
 import { HelpCircle, Search, Settings, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 
 import {
@@ -21,15 +22,43 @@ import { categories } from "~/lib/categories";
 
 const USER_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0b57f5"/><stop offset="100%" stop-color="#3fc6f7"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="50" cy="40" r="17" fill="white"/><rect x="18" y="62" width="64" height="50" rx="32" fill="white"/></svg>`;
 
-const fallbackAvatarStyle = {
+const fallbackAvatarBoxStyle = {
   backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(USER_ICON_SVG)}")`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
+  borderRadius: "9999px",
 };
+
+const fallbackAvatarImageStyle = { visibility: "hidden" as const };
 
 export function AppSidebar() {
   const location = useLocation();
+  const { user } = useUser();
+  const userButtonWrapperRef = useRef<HTMLDivElement>(null);
+
+  const openUserMenu = () => {
+    userButtonWrapperRef.current?.querySelector("button")?.click();
+  };
+
+  const hasCustomImage = user?.hasImage ?? false;
+
+  const avatarBoxStyle = hasCustomImage ? undefined : fallbackAvatarBoxStyle;
+  const avatarImageStyle = hasCustomImage
+    ? undefined
+    : fallbackAvatarImageStyle;
+
+  const avatarElements = {
+    avatarBox: avatarBoxStyle,
+    avatarImage: avatarImageStyle,
+    userButtonAvatarBox: avatarBoxStyle,
+    userButtonAvatarImage: avatarImageStyle,
+    userPreviewAvatarBox: avatarBoxStyle,
+    userPreviewAvatarImage: avatarImageStyle,
+  };
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const displayName = user?.fullName || email?.split("@")[0] || "...";
+
   const [query, setQuery] = useState("");
 
   const filteredCategories = useMemo(() => {
@@ -46,18 +75,16 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
+              render={<NavLink to="/" />}
               size="lg"
-              className="pointer-events-none cursor-default gap-2.5"
+              className="gap-2.5 w-fit"
             >
               <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
                 <Sparkles className="size-4" />
               </div>
               <div className="grid flex-1 text-left leading-tight">
                 <span className="truncate font-heading text-sm font-semibold">
-                  App
-                </span>
-                <span className="truncate text-xs text-sidebar-foreground/70">
-                  Workspace
+                  Product extractor
                 </span>
               </div>
             </SidebarMenuButton>
@@ -136,22 +163,31 @@ export function AppSidebar() {
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              className="pointer-events-none cursor-default gap-2.5"
-            >
-              <div
-                className="size-7 shrink-0 rounded-full bg-muted"
-                style={fallbackAvatarStyle}
-              />
-              <div className="grid flex-1 text-left leading-tight">
-                <span className="truncate text-sm font-medium">
-                  Sandra Marx
-                </span>
-                <span className="truncate text-xs text-sidebar-foreground/70">
-                  sandra@gmail.com
-                </span>
-              </div>
+            <SidebarMenuButton size="lg" className="gap-2.5">
+              <Show when="signed-in">
+                <div className="flex w-full items-center gap-2.5">
+                  <div ref={userButtonWrapperRef}>
+                    <UserButton
+                      appearance={{ elements: avatarElements }}
+                      userProfileProps={{
+                        appearance: { elements: avatarElements },
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="grid flex-1 text-left leading-tight"
+                    onClick={openUserMenu}
+                  >
+                    <span className="truncate text-sm font-medium">
+                      {displayName}
+                    </span>
+                    <span className="truncate text-xs text-sidebar-foreground/70">
+                      {email}
+                    </span>
+                  </button>
+                </div>
+              </Show>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
