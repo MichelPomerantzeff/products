@@ -1,7 +1,14 @@
 .DS_Store
 .env
+.env.local
 /node_modules/
 
 # React Router
 /.react-router/
 /build/
+
+# clerk configuration (can include secrets)
+/.clerk/
+
+# claude configuration
+.claude/
