@@ -7,8 +7,8 @@
 /.react-router/
 /build/
 
-# clerk configuration (can include secrets)
+# Clerk, Claude, and Agents
 /.clerk/
-
-# claude configuration
 .claude/
+.agents
+.vscode
