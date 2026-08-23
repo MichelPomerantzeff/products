@@ -1,13 +1,8 @@
+import { useMutation, useQuery } from "convex/react";
 import type { LucideIcon } from "lucide-react";
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useMemo,
-	useState,
-} from "react";
-
-import { categories as initialCategories } from "~/lib/categories";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { categoryIcons } from "~/lib/category-icons";
+import { api } from "../../convex/_generated/api";
 
 export type Category = {
 	slug: string;
@@ -18,7 +13,7 @@ export type Category = {
 
 type NewCategoryInput = {
 	label: string;
-	icon: LucideIcon;
+	iconName: string;
 };
 
 type CategoriesContextValue = {
@@ -26,34 +21,44 @@ type CategoriesContextValue = {
 	addCategory: (input: NewCategoryInput) => void;
 };
 
-const CategoriesContext = createContext<CategoriesContextValue | null>(null);
+const DEFAULT_ICON = categoryIcons[0].icon;
 
-function slugify(label: string) {
-	return label
-		.normalize("NFD")
-		.replace(/[̀-ͯ]/g, "")
-		.toLowerCase()
-		.trim()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-+|-+$/g, "");
+function resolveIcon(iconName: string): LucideIcon {
+	return (
+		categoryIcons.find((option) => option.name === iconName)?.icon ??
+		DEFAULT_ICON
+	);
 }
+
+const CategoriesContext = createContext<CategoriesContextValue | null>(null);
 
 export function CategoriesProvider({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	const [categories, setCategories] = useState<Category[]>(initialCategories);
+	const rawCategories = useQuery(api.categories.list);
+	const createCategory = useMutation(api.categories.create);
 
-	const addCategory = useCallback(({ label, icon }: NewCategoryInput) => {
-		const trimmedLabel = label.trim();
-		if (!trimmedLabel) return;
+	const categories = useMemo<Category[]>(
+		() =>
+			(rawCategories ?? []).map((category) => ({
+				slug: category.slug,
+				label: category.label,
+				count: category.count,
+				icon: resolveIcon(category.iconName),
+			})),
+		[rawCategories],
+	);
 
-		setCategories((current) => [
-			...current,
-			{ slug: slugify(trimmedLabel), label: trimmedLabel, icon, count: 0 },
-		]);
-	}, []);
+	const addCategory = useCallback(
+		({ label, iconName }: NewCategoryInput) => {
+			const trimmedLabel = label.trim();
+			if (!trimmedLabel) return;
+			void createCategory({ label: trimmedLabel, iconName });
+		},
+		[createCategory],
+	);
 
 	const value = useMemo(
 		() => ({ categories, addCategory }),
