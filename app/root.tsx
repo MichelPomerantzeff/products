@@ -13,6 +13,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { CategoriesProvider } from "~/lib/categories-store";
 import { ThemeProvider, useTheme } from "~/lib/theme";
 
 export const middleware = [clerkMiddleware()];
@@ -60,7 +61,9 @@ export default function App() {
 	return (
 		<ThemeProvider>
 			<ThemedClerkProvider loaderData={loaderData}>
-				<Outlet />
+				<CategoriesProvider>
+					<Outlet />
+				</CategoriesProvider>
 			</ThemedClerkProvider>
 		</ThemeProvider>
 	);

@@ -1,5 +1,5 @@
 import { Show, UserButton, useUser } from "@clerk/react-router";
-import { HelpCircle, Search, Settings, Sparkles } from "lucide-react";
+import { HelpCircle, Plus, Search, Settings, Sparkles } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 
@@ -18,7 +18,9 @@ import {
 	SidebarRail,
 	SidebarSeparator,
 } from "~/components/ui/sidebar";
-import { categories } from "~/lib/categories";
+import { useCategories } from "~/lib/categories-store";
+
+import { CreateCategoryDialog } from "./CreateCategoryDialog";
 
 const USER_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0b57f5"/><stop offset="100%" stop-color="#3fc6f7"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="50" cy="40" r="17" fill="white"/><rect x="18" y="62" width="64" height="50" rx="32" fill="white"/></svg>`;
 
@@ -59,7 +61,9 @@ export function AppSidebar() {
 	const email = user?.primaryEmailAddress?.emailAddress;
 	const displayName = user?.fullName || email?.split("@")[0] || "...";
 
+	const { categories } = useCategories();
 	const [query, setQuery] = useState("");
+	const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
 
 	const filteredCategories = useMemo(() => {
 		const normalized = query.trim().toLowerCase();
@@ -67,7 +71,7 @@ export function AppSidebar() {
 		return categories.filter((category) =>
 			category.label.toLowerCase().includes(normalized),
 		);
-	}, [query]);
+	}, [query, categories]);
 
 	return (
 		<Sidebar collapsible="icon">
@@ -104,9 +108,25 @@ export function AppSidebar() {
 				</div>
 			</SidebarHeader>
 
-			<SidebarContent className="justify-between">
-				<SidebarGroup>
+			<SidebarContent className="justify-between overflow-visible">
+				<SidebarGroup className="shrink-0 pb-0">
 					<SidebarGroupContent>
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<SidebarMenuButton
+									onClick={() => setIsCreateCategoryOpen(true)}
+									tooltip="Criar categoria"
+									className="border border-dashed border-sidebar-border text-sidebar-foreground/70 hover:border-sidebar-foreground/40 hover:bg-transparent hover:text-sidebar-foreground"
+								>
+									<Plus />
+									<span>Criar categoria</span>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+				<SidebarGroup className="min-h-0 flex-1 overflow-hidden">
+					<SidebarGroupContent className="scrollbar-thin h-full overflow-y-auto">
 						<SidebarMenu>
 							{filteredCategories.map((category) => {
 								const to = `/categorias/${category.slug}`;
@@ -133,7 +153,7 @@ export function AppSidebar() {
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
-				<SidebarGroup>
+				<SidebarGroup className="shrink-0">
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton
@@ -194,6 +214,10 @@ export function AppSidebar() {
 				</SidebarMenu>
 			</SidebarFooter>
 			<SidebarRail />
+			<CreateCategoryDialog
+				open={isCreateCategoryOpen}
+				onOpenChange={setIsCreateCategoryOpen}
+			/>
 		</Sidebar>
 	);
 }

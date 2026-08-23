@@ -1,0 +1,57 @@
+import {
+	Armchair,
+	Backpack,
+	Book,
+	Car,
+	Cpu,
+	Dumbbell,
+	Folder,
+	Gamepad2,
+	Gift,
+	Headphones,
+	Heart,
+	Home,
+	Laptop,
+	type LucideIcon,
+	Music,
+	Palette,
+	PawPrint,
+	Plane,
+	Shirt,
+	ShoppingBag,
+	Smartphone,
+	Speaker,
+	Tag,
+	Utensils,
+} from "lucide-react";
+
+export type CategoryIconOption = {
+	name: string;
+	icon: LucideIcon;
+};
+
+export const categoryIcons: CategoryIconOption[] = [
+	{ name: "Tag", icon: Tag },
+	{ name: "Pasta", icon: Folder },
+	{ name: "Sacola", icon: ShoppingBag },
+	{ name: "Casa", icon: Home },
+	{ name: "Eletrônicos", icon: Smartphone },
+	{ name: "Notebook", icon: Laptop },
+	{ name: "Hardware", icon: Cpu },
+	{ name: "Fones", icon: Headphones },
+	{ name: "Caixa de som", icon: Speaker },
+	{ name: "Móveis", icon: Armchair },
+	{ name: "Roupas", icon: Shirt },
+	{ name: "Mochila", icon: Backpack },
+	{ name: "Viagens", icon: Plane },
+	{ name: "Carro", icon: Car },
+	{ name: "Jogos", icon: Gamepad2 },
+	{ name: "Música", icon: Music },
+	{ name: "Livros", icon: Book },
+	{ name: "Comida", icon: Utensils },
+	{ name: "Esportes", icon: Dumbbell },
+	{ name: "Arte", icon: Palette },
+	{ name: "Pets", icon: PawPrint },
+	{ name: "Presentes", icon: Gift },
+	{ name: "Saúde", icon: Heart },
+];
