@@ -164,10 +164,10 @@ export function AppSidebar() {
 			<SidebarFooter>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size="lg" className="gap-2.5">
+						<SidebarMenuButton render={<div />} size="lg" className="gap-2.5">
 							<Show when="signed-in">
-								<div className="flex w-full items-center gap-2.5">
-									<div ref={userButtonWrapperRef}>
+								<div className="flex w-full items-center justify-center gap-2.5">
+									<div ref={userButtonWrapperRef} className="flex">
 										<UserButton
 											appearance={{ elements: avatarElements }}
 											userProfileProps={{
@@ -177,7 +177,7 @@ export function AppSidebar() {
 									</div>
 									<button
 										type="button"
-										className="grid flex-1 text-left leading-tight"
+										className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden"
 										onClick={openUserMenu}
 									>
 										<span className="truncate text-sm font-medium">
