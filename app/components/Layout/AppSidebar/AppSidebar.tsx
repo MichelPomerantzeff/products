@@ -77,7 +77,7 @@ export function AppSidebar() {
             <SidebarMenuButton
               render={<NavLink to="/" />}
               size="lg"
-              className="gap-2.5 w-fit"
+              className="gap-2.5"
             >
               <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
                 <Sparkles className="size-4" />
@@ -163,7 +163,7 @@ export function AppSidebar() {
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="gap-2.5">
+            <SidebarMenuButton render={<div />} size="lg" className="gap-2.5">
               <Show when="signed-in">
                 <div className="flex w-full items-center gap-2.5">
                   <div ref={userButtonWrapperRef}>

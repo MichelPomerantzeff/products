@@ -12,8 +12,8 @@ export function meta(_: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <main className="min-h-[calc(100vh-57px)] px-4 ">
-      <div className="max-w-7xl m-auto">
+    <main className="min-h-[calc(100vh-48px)] px-4 ">
+      <div>
         <Show when="signed-out">
           <SignInButton>
             <Button variant="ghost">Sign in</Button>
