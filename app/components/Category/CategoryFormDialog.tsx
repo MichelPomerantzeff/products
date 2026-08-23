@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -10,23 +10,47 @@ import {
 	DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import type { Category } from "~/lib/categories-store";
 import { useCategories } from "~/lib/categories-store";
 import { categoryIcons } from "~/lib/category-icons";
 import { cn } from "~/lib/utils";
 
 const DEFAULT_ICON_NAME = "Tag";
 
-export function CreateCategoryDialog({
+function iconNameFor(category: Category | undefined) {
+	if (!category) return DEFAULT_ICON_NAME;
+	return (
+		categoryIcons.find((option) => option.icon === category.icon)?.name ??
+		DEFAULT_ICON_NAME
+	);
+}
+
+export function CategoryFormDialog({
+	mode,
+	category,
 	open,
 	onOpenChange,
 }: {
+	mode: "create" | "edit";
+	category?: Category;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }) {
 	const { addCategory } = useCategories();
-	const [label, setLabel] = useState("");
+	const [label, setLabel] = useState(category?.label ?? "");
 	const [iconQuery, setIconQuery] = useState("");
-	const [selectedIconName, setSelectedIconName] = useState(DEFAULT_ICON_NAME);
+	const [selectedIconName, setSelectedIconName] = useState(
+		iconNameFor(category),
+	);
+
+	// Re-sync the form to the current category whenever the dialog is (re)opened,
+	// so editing always starts from the latest values instead of a stale snapshot.
+	useEffect(() => {
+		if (!open) return;
+		setLabel(category?.label ?? "");
+		setIconQuery("");
+		setSelectedIconName(iconNameFor(category));
+	}, [open, category]);
 
 	const filteredIcons = useMemo(() => {
 		const normalized = iconQuery.trim().toLowerCase();
@@ -36,32 +60,30 @@ export function CreateCategoryDialog({
 		);
 	}, [iconQuery]);
 
-	const resetForm = () => {
-		setLabel("");
-		setIconQuery("");
-		setSelectedIconName(DEFAULT_ICON_NAME);
-	};
-
-	const handleOpenChange = (nextOpen: boolean) => {
-		if (!nextOpen) resetForm();
-		onOpenChange(nextOpen);
-	};
-
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		const trimmedLabel = label.trim();
 		if (!trimmedLabel) return;
 
-		addCategory({ label: trimmedLabel, iconName: selectedIconName });
-		handleOpenChange(false);
+		if (mode === "create") {
+			addCategory({ label: trimmedLabel, iconName: selectedIconName });
+		}
+		// Edit mode doesn't persist yet — there's no `update` mutation in Convex
+		// yet (UI-only per docs/specs/editar-excluir-categorias-ui.md). This just
+		// closes the dialog until that's wired up.
+
+		onOpenChange(false);
 	};
 
+	const title = mode === "create" ? "Create category" : "Edit category";
+	const submitLabel = mode === "create" ? "Create" : "Save changes";
+
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Create category</DialogTitle>
+						<DialogTitle>{title}</DialogTitle>
 					</DialogHeader>
 
 					<div className="mt-4 flex flex-col gap-4">
@@ -122,12 +144,12 @@ export function CreateCategoryDialog({
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => handleOpenChange(false)}
+							onClick={() => onOpenChange(false)}
 						>
 							Cancel
 						</Button>
 						<Button type="submit" disabled={!label.trim()}>
-							Create
+							{submitLabel}
 						</Button>
 					</DialogFooter>
 				</form>

@@ -2,7 +2,7 @@ import { Show, UserButton, useUser } from "@clerk/react-router";
 import { HelpCircle, Plus, Search, Settings, Sparkles } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router";
-
+import { CategoryFormDialog } from "~/components/Category/CategoryFormDialog";
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,8 +19,6 @@ import {
 	SidebarSeparator,
 } from "~/components/ui/sidebar";
 import { useCategories } from "~/lib/categories-store";
-
-import { CreateCategoryDialog } from "./CreateCategoryDialog";
 
 const USER_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0b57f5"/><stop offset="100%" stop-color="#3fc6f7"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="50" cy="40" r="17" fill="white"/><rect x="18" y="62" width="64" height="50" rx="32" fill="white"/></svg>`;
 
@@ -214,7 +212,8 @@ export function AppSidebar() {
 				</SidebarMenu>
 			</SidebarFooter>
 			<SidebarRail />
-			<CreateCategoryDialog
+			<CategoryFormDialog
+				mode="create"
 				open={isCreateCategoryOpen}
 				onOpenChange={setIsCreateCategoryOpen}
 			/>
