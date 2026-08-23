@@ -1,14 +1,15 @@
 import { useParams } from "react-router";
 
-import { categories } from "~/lib/categories";
 import { useCategories } from "~/lib/categories-store";
 import type { Route } from "./+types/categoria";
 
 export function meta({ params }: Route.MetaArgs) {
-	// Roda fora da árvore de componentes (sem acesso ao CategoriesProvider),
-	// então só resolve categorias que já existiam no build.
-	const category = categories.find((c) => c.slug === params.slug);
-	return [{ title: category?.label ?? "Categoria" }];
+	// Roda fora da árvore de componentes (sem acesso ao CategoriesProvider/Convex),
+	// então usa o slug como aproximação do título em vez do label real.
+	const fallbackTitle = params.slug
+		? params.slug.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase())
+		: "Categoria";
+	return [{ title: fallbackTitle }];
 }
 
 export default function Categoria() {

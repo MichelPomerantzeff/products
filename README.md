@@ -1,17 +1,15 @@
-# Welcome to React Router!
+# Product Extractor
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+A React Router v8 app with categorized product organization and Clerk authentication.
 
 ## Features
 
 - 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
+- 🔐 [Clerk](https://clerk.com/) authentication, with dark-mode-aware UI via `@clerk/themes`
+- 🌗 Light/dark theme toggle
+- 🎨 [shadcn](https://ui.shadcn.com/) components on [Base UI](https://base-ui.com/)
+- 🎉 TailwindCSS v4 for styling
+- 🔒 TypeScript
 - 🧹 [Biome](https://biomejs.dev/) for linting and formatting
 - 📖 [React Router docs](https://reactrouter.com/)
 
@@ -24,6 +22,21 @@ Install the dependencies:
 ```bash
 npm install
 ```
+
+### Environment variables
+
+Copy `.env.local` (not committed) with your own Clerk keys:
+
+```
+VITE_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+VITE_CLERK_SIGN_IN_URL=/sign-in
+VITE_CLERK_SIGN_UP_URL=/sign-up
+VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+VITE_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
+```
+
+This project also uses [Convex](https://convex.dev/) as its backend. Run `npx convex dev` in a separate terminal before (or alongside) `npm run dev` — it logs you in, connects the project, and writes `VITE_CONVEX_URL` into `.env.local` automatically on first run. Without it running, data-dependent pages won't load.
 
 ### Development
 
@@ -81,7 +94,7 @@ Make sure to deploy the output of `npm run build`
 
 ## Linting & Formatting
 
-This template uses [Biome](https://biomejs.dev/) to lint and format the codebase. Run it with:
+This project uses [Biome](https://biomejs.dev/) to lint and format the codebase. Run it with:
 
 ```bash
 npm run lint-format
@@ -93,8 +106,5 @@ If you use VS Code, [`.vscode/settings.json`](./.vscode/settings.json) sets Biom
 
 ## Styling
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+This project uses [Tailwind CSS v4](https://tailwindcss.com/), with light/dark theme tokens defined in [`app/app.css`](./app/app.css) and a `ThemeProvider` ([`app/lib/theme.tsx`](./app/lib/theme.tsx)) that toggles the `.dark` class and persists the choice to `localStorage`.
 
----
-
-Built with ❤️ using React Router.

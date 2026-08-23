@@ -1,6 +1,8 @@
-import { ClerkProvider } from "@clerk/react-router";
+import { ClerkProvider, useAuth } from "@clerk/react-router";
 import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
 import { dark } from "@clerk/themes";
+import { ConvexReactClient } from "convex/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -15,6 +17,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { CategoriesProvider } from "~/lib/categories-store";
 import { ThemeProvider, useTheme } from "~/lib/theme";
+
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 
 export const middleware = [clerkMiddleware()];
 
@@ -83,7 +87,9 @@ function ThemedClerkProvider({
 			loaderData={loaderData}
 			appearance={isDark ? dark : undefined}
 		>
-			{children}
+			<ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+				{children}
+			</ConvexProviderWithClerk>
 		</ClerkProvider>
 	);
 }

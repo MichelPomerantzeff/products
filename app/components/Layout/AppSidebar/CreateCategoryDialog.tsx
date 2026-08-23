@@ -1,4 +1,4 @@
-import { Search, Tag } from "lucide-react";
+import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -52,11 +52,7 @@ export function CreateCategoryDialog({
 		const trimmedLabel = label.trim();
 		if (!trimmedLabel) return;
 
-		const selectedIcon =
-			categoryIcons.find((option) => option.name === selectedIconName)?.icon ??
-			Tag;
-
-		addCategory({ label: trimmedLabel, icon: selectedIcon });
+		addCategory({ label: trimmedLabel, iconName: selectedIconName });
 		handleOpenChange(false);
 	};
 

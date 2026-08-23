@@ -7,7 +7,10 @@ export function Header() {
 	return (
 		<header className="flex shrink-0 items-center justify-between gap-2 border-b p-2">
 			<SidebarTrigger />
-			<Button variant="ghost" className="flex items-center gap-2 md:hidden py-4">
+			<Button
+				variant="ghost"
+				className="flex items-center gap-2 md:hidden py-4"
+			>
 				<div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
 					<Sparkles className="size-3" />
 				</div>
