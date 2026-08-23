@@ -77,12 +77,12 @@ export function AppSidebar() {
 						<SidebarMenuButton
 							render={<NavLink to="/" />}
 							size="lg"
-							className="gap-2.5"
+							className="gap-2.5 justify-center"
 						>
 							<div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
 								<Sparkles className="size-4" />
 							</div>
-							<div className="grid flex-1 text-left leading-tight">
+							<div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
 								<span className="truncate font-heading text-sm font-semibold">
 									Product extractor
 								</span>
