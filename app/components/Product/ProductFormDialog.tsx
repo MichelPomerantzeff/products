@@ -15,6 +15,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Textarea } from "~/components/ui/textarea";
 import type { Availability, Product, ProductInput } from "~/lib/products-store";
 
@@ -139,7 +140,16 @@ export function ProductFormDialog({
 						<DialogTitle className="text-lg">{title}</DialogTitle>
 					</DialogHeader>
 
-					<div className="scrollbar-thin mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1 p-4 mb-4 rounded-lg bg-muted">
+					<Tabs defaultValue="manual" className="mt-4 flex min-h-0 flex-1 flex-col">
+						<TabsList className="w-full">
+							<TabsTrigger value="manual">Manual</TabsTrigger>
+							<TabsTrigger value="extractor">Product extractor</TabsTrigger>
+						</TabsList>
+
+						<TabsContent
+							value="manual"
+							className="scrollbar-thin flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1 p-4 mb-4 rounded-lg bg-muted"
+						>
 						<Field label="Name" htmlFor="product-name">
 							<Input
 								id="product-name"
@@ -285,7 +295,16 @@ export function ProductFormDialog({
 								placeholder="E.g.: Waterproof, USB-C, 2-year warranty"
 							/>
 						</Field>
-					</div>
+						</TabsContent>
+
+						<TabsContent
+							value="extractor"
+							className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 mb-4 rounded-lg bg-muted text-center text-sm text-muted-foreground"
+						>
+							<p>Product extractor coming soon.</p>
+							<p>Enter a product URL and we&apos;ll fill in the details for you.</p>
+						</TabsContent>
+					</Tabs>
 
 					<DialogFooter>
 						<Button
