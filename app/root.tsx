@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/react-router";
 import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
+import { dark } from "@clerk/themes";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -12,6 +13,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { ThemeProvider, useTheme } from "~/lib/theme";
 
 export const middleware = [clerkMiddleware()];
 
@@ -33,12 +35,16 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<Meta />
 				<Links />
+				{/* Runs before paint to avoid a flash of the wrong theme. */}
+				<script>
+					{`(function(){var t=localStorage.getItem("theme");var d=t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);})();`}
+				</script>
 			</head>
 			<body>
 				{children}
@@ -52,8 +58,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
 	const loaderData = useLoaderData<typeof loader>();
 	return (
-		<ClerkProvider loaderData={loaderData}>
-			<Outlet />
+		<ThemeProvider>
+			<ThemedClerkProvider loaderData={loaderData}>
+				<Outlet />
+			</ThemedClerkProvider>
+		</ThemeProvider>
+	);
+}
+
+function ThemedClerkProvider({
+	loaderData,
+	children,
+}: {
+	loaderData: Awaited<ReturnType<typeof loader>>;
+	children: React.ReactNode;
+}) {
+	const { isDark } = useTheme();
+
+	return (
+		<ClerkProvider
+			loaderData={loaderData}
+			appearance={isDark ? dark : undefined}
+		>
+			{children}
 		</ClerkProvider>
 	);
 }
