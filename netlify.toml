@@ -1,3 +1,8 @@
 [build]
   command = "npm run build"
   publish = "build/client"
+
+[build.environment]
+  # These are public route paths (e.g. "/sign-in"), not secrets — Netlify's
+  # scanner flags any VITE_ var baked into the client bundle by default.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_CLERK_SIGN_IN_URL,VITE_CLERK_SIGN_UP_URL"
