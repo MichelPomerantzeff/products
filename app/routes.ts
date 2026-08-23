@@ -9,7 +9,7 @@ export default [
 	layout("routes/auth-guard.tsx", [
 		layout("routes/app-shell.tsx", [
 			index("routes/home.tsx"),
-			route("categorias/:slug", "routes/categoria.tsx"),
+			route("categories/:slug", "routes/category.tsx"),
 			route("settings", "routes/settings.tsx"),
 			route("help", "routes/help.tsx"),
 		]),

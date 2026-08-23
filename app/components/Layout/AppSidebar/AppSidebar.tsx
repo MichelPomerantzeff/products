@@ -100,9 +100,9 @@ export function AppSidebar() {
 						<SidebarInput
 							value={query}
 							onChange={(event) => setQuery(event.target.value)}
-							placeholder="Buscar categoria..."
+							placeholder="Search category..."
 							className="pl-7"
-							aria-label="Buscar categoria"
+							aria-label="Search category"
 						/>
 					</div>
 				</div>
@@ -115,11 +115,11 @@ export function AppSidebar() {
 							<SidebarMenuItem>
 								<SidebarMenuButton
 									onClick={() => setIsCreateCategoryOpen(true)}
-									tooltip="Criar categoria"
+									tooltip="Create category"
 									className="border border-dashed border-sidebar-border text-sidebar-foreground/70 hover:border-sidebar-foreground/40 hover:bg-transparent hover:text-sidebar-foreground"
 								>
 									<Plus />
-									<span>Criar categoria</span>
+									<span>Create category</span>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>
@@ -129,7 +129,7 @@ export function AppSidebar() {
 					<SidebarGroupContent className="scrollbar-thin h-full overflow-y-auto">
 						<SidebarMenu>
 							{filteredCategories.map((category) => {
-								const to = `/categorias/${category.slug}`;
+								const to = `/categories/${category.slug}`;
 								const isActive = location.pathname === to;
 								return (
 									<SidebarMenuItem key={category.slug}>
@@ -147,7 +147,7 @@ export function AppSidebar() {
 							})}
 							{filteredCategories.length === 0 && (
 								<p className="px-2 py-1.5 text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">
-									Nenhuma categoria encontrada.
+									No category found.
 								</p>
 							)}
 						</SidebarMenu>

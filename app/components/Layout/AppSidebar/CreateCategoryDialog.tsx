@@ -61,33 +61,33 @@ export function CreateCategoryDialog({
 			<DialogContent>
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Criar categoria</DialogTitle>
+						<DialogTitle>Create category</DialogTitle>
 					</DialogHeader>
 
 					<div className="mt-4 flex flex-col gap-4">
 						<div className="flex flex-col gap-1.5">
 							<label htmlFor="category-label" className="text-sm font-medium">
-								Nome
+								Name
 							</label>
 							<Input
 								id="category-label"
 								value={label}
 								onChange={(event) => setLabel(event.target.value)}
-								placeholder="Ex: Cozinha"
+								placeholder="E.g.: Kitchen"
 								autoFocus
 							/>
 						</div>
 
 						<div className="flex flex-col gap-1.5">
-							<span className="text-sm font-medium">Ícone</span>
+							<span className="text-sm font-medium">Icon</span>
 							<div className="relative">
 								<Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
 								<Input
 									value={iconQuery}
 									onChange={(event) => setIconQuery(event.target.value)}
-									placeholder="Buscar ícone..."
+									placeholder="Search icon..."
 									className="pl-7"
-									aria-label="Buscar ícone"
+									aria-label="Search icon"
 								/>
 							</div>
 							<div className="scrollbar-thin grid max-h-40 grid-cols-6 gap-1 overflow-y-auto rounded-md border p-1.5">
@@ -111,7 +111,7 @@ export function CreateCategoryDialog({
 								})}
 								{filteredIcons.length === 0 && (
 									<p className="col-span-6 py-2 text-center text-xs text-muted-foreground">
-										Nenhum ícone encontrado.
+										No icon found.
 									</p>
 								)}
 							</div>
@@ -124,10 +124,10 @@ export function CreateCategoryDialog({
 							variant="outline"
 							onClick={() => handleOpenChange(false)}
 						>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={!label.trim()}>
-							Criar
+							Create
 						</Button>
 					</DialogFooter>
 				</form>

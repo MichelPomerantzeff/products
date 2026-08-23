@@ -1,18 +1,18 @@
 import { useParams } from "react-router";
 
 import { useCategories } from "~/lib/categories-store";
-import type { Route } from "./+types/categoria";
+import type { Route } from "./+types/category";
 
 export function meta({ params }: Route.MetaArgs) {
-	// Roda fora da árvore de componentes (sem acesso ao CategoriesProvider/Convex),
-	// então usa o slug como aproximação do título em vez do label real.
+	// Runs outside the component tree (no access to CategoriesProvider/Convex),
+	// so it uses the slug as an approximation of the title instead of the real label.
 	const fallbackTitle = params.slug
 		? params.slug.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase())
-		: "Categoria";
+		: "Category";
 	return [{ title: fallbackTitle }];
 }
 
-export default function Categoria() {
+export default function Category() {
 	const { slug } = useParams();
 	const { categories } = useCategories();
 	const category = categories.find((c) => c.slug === slug);
@@ -21,7 +21,7 @@ export default function Categoria() {
 		<main className="p-6">
 			<h1 className="text-2xl font-semibold">{category?.label ?? slug}</h1>
 			<p className="mt-2 text-muted-foreground">
-				Página placeholder da categoria "{slug}".
+				Placeholder page for category "{slug}".
 			</p>
 		</main>
 	);
