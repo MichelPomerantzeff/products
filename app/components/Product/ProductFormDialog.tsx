@@ -8,15 +8,28 @@ import {
 	DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import type { Availability, Product, ProductInput } from "~/lib/products-store";
-import { cn } from "~/lib/utils";
 
 const AVAILABILITY_OPTIONS: { value: Availability; label: string }[] = [
 	{ value: "in_stock", label: "In stock" },
 	{ value: "out_of_stock", label: "Out of stock" },
 	{ value: "preorder", label: "Preorder" },
 ];
+
+const AVAILABILITY_LABELS: Record<string, string> = {
+	unset: "Not set",
+	...Object.fromEntries(
+		AVAILABILITY_OPTIONS.map((option) => [option.value, option.label]),
+	),
+};
 
 type ProductForm = {
 	name: string;
@@ -120,13 +133,13 @@ export function ProductFormDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="flex max-h-[85vh] flex-col sm:max-w-md">
+			<DialogContent className="flex max-h-[85vh] flex-col sm:max-w-xl">
 				<form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
 					<DialogHeader>
 						<DialogTitle className="text-lg">{title}</DialogTitle>
 					</DialogHeader>
 
-					<div className="scrollbar-thin mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
+					<div className="scrollbar-thin mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1 p-4 mb-4 rounded-lg bg-muted">
 						<Field label="Name" htmlFor="product-name">
 							<Input
 								id="product-name"
@@ -177,6 +190,7 @@ export function ProductFormDialog({
 										}))
 									}
 									placeholder="0.00"
+									className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 								/>
 							</Field>
 
@@ -198,6 +212,7 @@ export function ProductFormDialog({
 										}))
 									}
 									placeholder="0.00"
+									className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 								/>
 							</Field>
 						</div>
@@ -215,26 +230,30 @@ export function ProductFormDialog({
 						</Field>
 
 						<Field label="Availability" htmlFor="product-availability" optional>
-							<select
-								id="product-availability"
-								value={form.availability}
-								onChange={(event) =>
+							<Select
+								value={form.availability || "unset"}
+								onValueChange={(value) =>
 									setForm((f) => ({
 										...f,
-										availability: event.target.value as Availability | "",
+										availability:
+											value === "unset" ? "" : (value as Availability),
 									}))
 								}
-								className={cn(
-									"h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30",
-								)}
 							>
-								<option value="">Not set</option>
-								{AVAILABILITY_OPTIONS.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
+								<SelectTrigger id="product-availability" className="w-full">
+									<SelectValue>
+										{(value: string) => AVAILABILITY_LABELS[value] ?? "Not set"}
+									</SelectValue>
+								</SelectTrigger>
+								<SelectContent alignItemWithTrigger={false}>
+									<SelectItem value="unset">Not set</SelectItem>
+									{AVAILABILITY_OPTIONS.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</Field>
 
 						<Field label="Description" htmlFor="product-description" optional>
