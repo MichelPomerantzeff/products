@@ -13,13 +13,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import type { Product } from "~/lib/mock-products";
 import {
 	availabilityBadgeVariant,
 	availabilityLabels,
 	discountPercent,
 	formatPrice,
 } from "~/lib/product-format";
+import type { Product } from "~/lib/products-store";
 
 export function ProductRow({
 	product,

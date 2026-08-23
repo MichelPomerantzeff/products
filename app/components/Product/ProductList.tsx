@@ -1,5 +1,5 @@
 import { ProductRow } from "~/components/Product/ProductRow";
-import type { Product } from "~/lib/mock-products";
+import type { Product } from "~/lib/products-store";
 
 export function ProductList({
 	products,

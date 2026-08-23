@@ -1,78 +1,79 @@
-import { useCallback, useEffect, useState } from "react";
-import { type Product, seedProductsFor } from "~/lib/mock-products";
+import { useMutation, useQuery } from "convex/react";
+import { useCallback, useMemo } from "react";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
-function storageKey(categorySlug: string) {
-	return `products:${categorySlug}`;
-}
+export type Availability = "in_stock" | "out_of_stock" | "preorder";
 
-function readProducts(categorySlug: string): Product[] {
-	try {
-		const raw = localStorage.getItem(storageKey(categorySlug));
-		if (raw) return JSON.parse(raw) as Product[];
-	} catch {
-		// localStorage unavailable (e.g. private mode) — fall through to seed data.
-	}
-	return seedProductsFor(categorySlug);
-}
+export type Product = {
+	id: Id<"products">;
+	categoryId: Id<"categories">;
+	name: string;
+	url: string;
+	source: string;
+	currentPrice: number;
+	previousPrice?: number;
+	imageUrl?: string;
+	description?: string;
+	features?: string[];
+	availability?: Availability;
+};
 
-function writeProducts(categorySlug: string, products: Product[]) {
-	try {
-		localStorage.setItem(storageKey(categorySlug), JSON.stringify(products));
-	} catch {
-		// Best-effort persistence only; in-memory state still works this session.
-	}
-}
+export type ProductInput = Omit<Product, "id" | "categoryId">;
 
-export type ProductInput = Omit<Product, "id" | "categorySlug">;
+export function useProducts(categoryId: Id<"categories"> | undefined) {
+	const rawProducts = useQuery(
+		api.products.list,
+		categoryId ? { categoryId } : "skip",
+	);
+	const isLoading = rawProducts === undefined;
+	const createProduct = useMutation(api.products.create);
+	const patchProduct = useMutation(api.products.update);
+	const deleteProduct = useMutation(api.products.remove);
 
-export function useProducts(categorySlug: string) {
-	const [products, setProducts] = useState<Product[] | undefined>(undefined);
-
-	useEffect(() => {
-		setProducts(readProducts(categorySlug));
-	}, [categorySlug]);
-
-	const persist = useCallback(
-		(next: Product[]) => {
-			setProducts(next);
-			writeProducts(categorySlug, next);
-		},
-		[categorySlug],
+	const products = useMemo<Product[]>(
+		() =>
+			(rawProducts ?? []).map((product) => ({
+				id: product._id,
+				categoryId: product.categoryId,
+				name: product.name,
+				url: product.url,
+				source: product.source,
+				currentPrice: product.currentPrice,
+				previousPrice: product.previousPrice,
+				imageUrl: product.imageUrl,
+				description: product.description,
+				features: product.features,
+				availability: product.availability,
+			})),
+		[rawProducts],
 	);
 
 	const addProduct = useCallback(
 		(input: ProductInput) => {
-			const product: Product = {
-				...input,
-				id: crypto.randomUUID(),
-				categorySlug,
-			};
-			persist([product, ...(products ?? [])]);
+			if (!categoryId) return;
+			void createProduct({ categoryId, ...input });
 		},
-		[categorySlug, products, persist],
+		[categoryId, createProduct],
 	);
 
 	const updateProduct = useCallback(
-		(id: string, input: ProductInput) => {
-			persist(
-				(products ?? []).map((product) =>
-					product.id === id ? { ...product, ...input } : product,
-				),
-			);
+		(id: Id<"products">, input: ProductInput) => {
+			void patchProduct({ id, ...input });
 		},
-		[products, persist],
+		[patchProduct],
 	);
 
 	const removeProduct = useCallback(
-		(id: string) => {
-			persist((products ?? []).filter((product) => product.id !== id));
+		(id: Id<"products">) => {
+			void deleteProduct({ id });
 		},
-		[products, persist],
+		[deleteProduct],
 	);
 
 	return {
-		products: products ?? [],
-		isLoading: products === undefined,
+		products,
+		isLoading,
 		addProduct,
 		updateProduct,
 		removeProduct,

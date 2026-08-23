@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
-import { type MutationCtx, mutation, query } from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
+import { deleteProductsForCategory } from "./products";
 
 function slugify(label: string) {
 	return label
@@ -47,7 +48,10 @@ export const create = mutation({
 	},
 });
 
-async function requireOwnedCategory(ctx: MutationCtx, id: Id<"categories">) {
+export async function requireOwnedCategory(
+	ctx: QueryCtx,
+	id: Id<"categories">,
+) {
 	const identity = await ctx.auth.getUserIdentity();
 	if (!identity) throw new Error("Not authenticated");
 
@@ -84,6 +88,7 @@ export const remove = mutation({
 	},
 	handler: async (ctx, { id }) => {
 		await requireOwnedCategory(ctx, id);
+		await deleteProductsForCategory(ctx, id);
 		await ctx.db.delete(id);
 	},
 });

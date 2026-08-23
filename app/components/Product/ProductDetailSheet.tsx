@@ -9,13 +9,13 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "~/components/ui/sheet";
-import type { Product } from "~/lib/mock-products";
 import {
 	availabilityBadgeVariant,
 	availabilityLabels,
 	discountPercent,
 	formatPrice,
 } from "~/lib/product-format";
+import type { Product } from "~/lib/products-store";
 
 export function ProductDetailSheet({
 	product,

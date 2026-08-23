@@ -9,8 +9,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import type { Availability, Product } from "~/lib/mock-products";
-import type { ProductInput } from "~/lib/products-store";
+import type { Availability, Product, ProductInput } from "~/lib/products-store";
 import { cn } from "~/lib/utils";
 
 const AVAILABILITY_OPTIONS: { value: Availability; label: string }[] = [

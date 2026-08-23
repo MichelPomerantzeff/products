@@ -8,7 +8,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
-import type { Product } from "~/lib/mock-products";
+import type { Product } from "~/lib/products-store";
 
 export function DeleteProductDialog({
 	product,

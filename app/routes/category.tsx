@@ -19,8 +19,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useCategories } from "~/lib/categories-store";
-import type { Product } from "~/lib/mock-products";
-import { useProducts } from "~/lib/products-store";
+import { type Product, useProducts } from "~/lib/products-store";
 import { useProductViewMode } from "~/lib/use-product-view-mode";
 import type { Route } from "./+types/category";
 
@@ -42,7 +41,7 @@ export default function Category() {
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
 	const { products, addProduct, updateProduct, removeProduct } = useProducts(
-		slug ?? "",
+		category?.id,
 	);
 	const [viewMode, setViewMode] = useProductViewMode();
 	const [isAddProductOpen, setIsAddProductOpen] = useState(false);

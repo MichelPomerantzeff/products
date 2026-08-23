@@ -1,4 +1,4 @@
-import type { Availability } from "~/lib/mock-products";
+import type { Availability } from "~/lib/products-store";
 
 const priceFormatter = new Intl.NumberFormat("en-IE", {
 	style: "currency",

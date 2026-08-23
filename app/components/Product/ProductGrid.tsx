@@ -1,5 +1,5 @@
 import { ProductCard } from "~/components/Product/ProductCard";
-import type { Product } from "~/lib/mock-products";
+import type { Product } from "~/lib/products-store";
 
 export function ProductGrid({
 	products,
