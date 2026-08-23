@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -10,23 +10,49 @@ import {
 	DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import type { Category } from "~/lib/categories-store";
 import { useCategories } from "~/lib/categories-store";
 import { categoryIcons } from "~/lib/category-icons";
 import { cn } from "~/lib/utils";
 
 const DEFAULT_ICON_NAME = "Tag";
 
-export function CreateCategoryDialog({
+function iconNameFor(category: Category | undefined) {
+	if (!category) return DEFAULT_ICON_NAME;
+	return (
+		categoryIcons.find((option) => option.icon === category.icon)?.name ??
+		DEFAULT_ICON_NAME
+	);
+}
+
+export function CategoryFormDialog({
+	mode,
+	category,
 	open,
 	onOpenChange,
+	onSaved,
 }: {
+	mode: "create" | "edit";
+	category?: Category;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onSaved?: (slug: string) => void;
 }) {
-	const { addCategory } = useCategories();
-	const [label, setLabel] = useState("");
+	const { addCategory, updateCategory } = useCategories();
+	const [label, setLabel] = useState(category?.label ?? "");
 	const [iconQuery, setIconQuery] = useState("");
-	const [selectedIconName, setSelectedIconName] = useState(DEFAULT_ICON_NAME);
+	const [selectedIconName, setSelectedIconName] = useState(
+		iconNameFor(category),
+	);
+
+	// Re-sync the form to the current category whenever the dialog is (re)opened,
+	// so editing always starts from the latest values instead of a stale snapshot.
+	useEffect(() => {
+		if (!open) return;
+		setLabel(category?.label ?? "");
+		setIconQuery("");
+		setSelectedIconName(iconNameFor(category));
+	}, [open, category]);
 
 	const filteredIcons = useMemo(() => {
 		const normalized = iconQuery.trim().toLowerCase();
@@ -36,58 +62,59 @@ export function CreateCategoryDialog({
 		);
 	}, [iconQuery]);
 
-	const resetForm = () => {
-		setLabel("");
-		setIconQuery("");
-		setSelectedIconName(DEFAULT_ICON_NAME);
-	};
-
-	const handleOpenChange = (nextOpen: boolean) => {
-		if (!nextOpen) resetForm();
-		onOpenChange(nextOpen);
-	};
-
-	const handleSubmit = (event: React.FormEvent) => {
+	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const trimmedLabel = label.trim();
 		if (!trimmedLabel) return;
 
-		addCategory({ label: trimmedLabel, iconName: selectedIconName });
-		handleOpenChange(false);
+		if (mode === "create") {
+			addCategory({ label: trimmedLabel, iconName: selectedIconName });
+		} else if (category) {
+			const newSlug = await updateCategory(category.id, {
+				label: trimmedLabel,
+				iconName: selectedIconName,
+			});
+			if (newSlug) onSaved?.(newSlug);
+		}
+
+		onOpenChange(false);
 	};
 
+	const title = mode === "create" ? "Create category" : "Edit category";
+	const submitLabel = mode === "create" ? "Create" : "Save changes";
+
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Criar categoria</DialogTitle>
+						<DialogTitle>{title}</DialogTitle>
 					</DialogHeader>
 
 					<div className="mt-4 flex flex-col gap-4">
 						<div className="flex flex-col gap-1.5">
 							<label htmlFor="category-label" className="text-sm font-medium">
-								Nome
+								Name
 							</label>
 							<Input
 								id="category-label"
 								value={label}
 								onChange={(event) => setLabel(event.target.value)}
-								placeholder="Ex: Cozinha"
+								placeholder="E.g.: Kitchen"
 								autoFocus
 							/>
 						</div>
 
 						<div className="flex flex-col gap-1.5">
-							<span className="text-sm font-medium">Ícone</span>
+							<span className="text-sm font-medium">Icon</span>
 							<div className="relative">
 								<Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
 								<Input
 									value={iconQuery}
 									onChange={(event) => setIconQuery(event.target.value)}
-									placeholder="Buscar ícone..."
+									placeholder="Search icon..."
 									className="pl-7"
-									aria-label="Buscar ícone"
+									aria-label="Search icon"
 								/>
 							</div>
 							<div className="scrollbar-thin grid max-h-40 grid-cols-6 gap-1 overflow-y-auto rounded-md border p-1.5">
@@ -111,7 +138,7 @@ export function CreateCategoryDialog({
 								})}
 								{filteredIcons.length === 0 && (
 									<p className="col-span-6 py-2 text-center text-xs text-muted-foreground">
-										Nenhum ícone encontrado.
+										No icon found.
 									</p>
 								)}
 							</div>
@@ -122,12 +149,12 @@ export function CreateCategoryDialog({
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => handleOpenChange(false)}
+							onClick={() => onOpenChange(false)}
 						>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={!label.trim()}>
-							Criar
+							{submitLabel}
 						</Button>
 					</DialogFooter>
 				</form>
