@@ -1,6 +1,6 @@
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { NavLink, useNavigate, useParams } from "react-router";
 
 import { CategoryFormDialog } from "~/components/Category/CategoryFormDialog";
 import { DeleteCategoryDialog } from "~/components/Category/DeleteCategoryDialog";
@@ -25,18 +25,26 @@ export function meta({ params }: Route.MetaArgs) {
 
 export default function Category() {
 	const { slug } = useParams();
-	const { categories } = useCategories();
+	const navigate = useNavigate();
+	const { categories, isLoading } = useCategories();
 	const category = categories.find((c) => c.slug === slug);
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
+	// Data loads client-side (Convex), so don't flash a "not found" error for a
+	// valid category while its query is still in flight.
+	if (isLoading) return null;
+
 	if (!category) {
 		return (
 			<main className="p-6">
-				<h1 className="text-2xl font-semibold">{slug}</h1>
+				<h1 className="text-2xl font-semibold">404</h1>
 				<p className="mt-2 text-muted-foreground">
-					Placeholder page for category "{slug}".
+					The requested category could not be found.
 				</p>
+				<Button className="mt-4" render={<NavLink to="/" />}>
+					Back home
+				</Button>
 			</main>
 		);
 	}
@@ -99,11 +107,13 @@ export default function Category() {
 				category={category}
 				open={isEditOpen}
 				onOpenChange={setIsEditOpen}
+				onSaved={(newSlug) => navigate(`/categories/${newSlug}`)}
 			/>
 			<DeleteCategoryDialog
 				category={category}
 				open={isDeleteOpen}
 				onOpenChange={setIsDeleteOpen}
+				onDeleted={() => navigate("/")}
 			/>
 		</main>
 	);

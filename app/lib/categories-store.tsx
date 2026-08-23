@@ -3,22 +3,30 @@ import type { LucideIcon } from "lucide-react";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { categoryIcons } from "~/lib/category-icons";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
 export type Category = {
+	id: Id<"categories">;
 	slug: string;
 	label: string;
 	icon: LucideIcon;
 	count: number;
 };
 
-type NewCategoryInput = {
+type CategoryInput = {
 	label: string;
 	iconName: string;
 };
 
 type CategoriesContextValue = {
 	categories: Category[];
-	addCategory: (input: NewCategoryInput) => void;
+	isLoading: boolean;
+	addCategory: (input: CategoryInput) => void;
+	updateCategory: (
+		id: Id<"categories">,
+		input: CategoryInput,
+	) => Promise<string | undefined>;
+	removeCategory: (id: Id<"categories">) => void;
 };
 
 const DEFAULT_ICON = categoryIcons[0].icon;
@@ -38,11 +46,15 @@ export function CategoriesProvider({
 	children: React.ReactNode;
 }) {
 	const rawCategories = useQuery(api.categories.list);
+	const isLoading = rawCategories === undefined;
 	const createCategory = useMutation(api.categories.create);
+	const patchCategory = useMutation(api.categories.update);
+	const deleteCategory = useMutation(api.categories.remove);
 
 	const categories = useMemo<Category[]>(
 		() =>
 			(rawCategories ?? []).map((category) => ({
+				id: category._id,
 				slug: category.slug,
 				label: category.label,
 				count: category.count,
@@ -52,7 +64,7 @@ export function CategoriesProvider({
 	);
 
 	const addCategory = useCallback(
-		({ label, iconName }: NewCategoryInput) => {
+		({ label, iconName }: CategoryInput) => {
 			const trimmedLabel = label.trim();
 			if (!trimmedLabel) return;
 			void createCategory({ label: trimmedLabel, iconName });
@@ -60,9 +72,31 @@ export function CategoriesProvider({
 		[createCategory],
 	);
 
+	const updateCategory = useCallback(
+		async (id: Id<"categories">, { label, iconName }: CategoryInput) => {
+			const trimmedLabel = label.trim();
+			if (!trimmedLabel) return undefined;
+			return patchCategory({ id, label: trimmedLabel, iconName });
+		},
+		[patchCategory],
+	);
+
+	const removeCategory = useCallback(
+		(id: Id<"categories">) => {
+			void deleteCategory({ id });
+		},
+		[deleteCategory],
+	);
+
 	const value = useMemo(
-		() => ({ categories, addCategory }),
-		[categories, addCategory],
+		() => ({
+			categories,
+			isLoading,
+			addCategory,
+			updateCategory,
+			removeCategory,
+		}),
+		[categories, isLoading, addCategory, updateCategory, removeCategory],
 	);
 
 	return (

@@ -9,20 +9,25 @@ import {
 	AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import type { Category } from "~/lib/categories-store";
+import { useCategories } from "~/lib/categories-store";
 
 export function DeleteCategoryDialog({
 	category,
 	open,
 	onOpenChange,
+	onDeleted,
 }: {
 	category: Category;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onDeleted?: () => void;
 }) {
+	const { removeCategory } = useCategories();
+
 	const handleConfirm = () => {
-		// No `remove` mutation in Convex yet — this just closes the dialog until
-		// that's wired up (UI-only per docs/specs/editar-excluir-categorias-ui.md).
+		removeCategory(category.id);
 		onOpenChange(false);
+		onDeleted?.();
 	};
 
 	return (
@@ -34,7 +39,9 @@ export function DeleteCategoryDialog({
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={handleConfirm}>Delete</AlertDialogAction>
+					<AlertDialogAction variant="destructive" onClick={handleConfirm}>
+						Delete
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

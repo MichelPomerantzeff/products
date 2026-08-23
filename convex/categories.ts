@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import { type MutationCtx, mutation, query } from "./_generated/server";
 
 function slugify(label: string) {
 	return label
@@ -43,5 +44,46 @@ export const create = mutation({
 			iconName,
 			count: 0,
 		});
+	},
+});
+
+async function requireOwnedCategory(ctx: MutationCtx, id: Id<"categories">) {
+	const identity = await ctx.auth.getUserIdentity();
+	if (!identity) throw new Error("Not authenticated");
+
+	const category = await ctx.db.get(id);
+	if (!category || category.userId !== identity.subject) {
+		throw new Error("Category not found");
+	}
+
+	return category;
+}
+
+export const update = mutation({
+	args: {
+		id: v.id("categories"),
+		label: v.string(),
+		iconName: v.string(),
+	},
+	handler: async (ctx, { id, label, iconName }) => {
+		await requireOwnedCategory(ctx, id);
+
+		const trimmedLabel = label.trim();
+		if (!trimmedLabel) throw new Error("Label is required");
+
+		const slug = slugify(trimmedLabel);
+		await ctx.db.patch(id, { slug, label: trimmedLabel, iconName });
+
+		return slug;
+	},
+});
+
+export const remove = mutation({
+	args: {
+		id: v.id("categories"),
+	},
+	handler: async (ctx, { id }) => {
+		await requireOwnedCategory(ctx, id);
+		await ctx.db.delete(id);
 	},
 });

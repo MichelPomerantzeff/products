@@ -30,13 +30,15 @@ export function CategoryFormDialog({
 	category,
 	open,
 	onOpenChange,
+	onSaved,
 }: {
 	mode: "create" | "edit";
 	category?: Category;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onSaved?: (slug: string) => void;
 }) {
-	const { addCategory } = useCategories();
+	const { addCategory, updateCategory } = useCategories();
 	const [label, setLabel] = useState(category?.label ?? "");
 	const [iconQuery, setIconQuery] = useState("");
 	const [selectedIconName, setSelectedIconName] = useState(
@@ -60,17 +62,20 @@ export function CategoryFormDialog({
 		);
 	}, [iconQuery]);
 
-	const handleSubmit = (event: React.FormEvent) => {
+	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const trimmedLabel = label.trim();
 		if (!trimmedLabel) return;
 
 		if (mode === "create") {
 			addCategory({ label: trimmedLabel, iconName: selectedIconName });
+		} else if (category) {
+			const newSlug = await updateCategory(category.id, {
+				label: trimmedLabel,
+				iconName: selectedIconName,
+			});
+			if (newSlug) onSaved?.(newSlug);
 		}
-		// Edit mode doesn't persist yet — there's no `update` mutation in Convex
-		// yet (UI-only per docs/specs/editar-excluir-categorias-ui.md). This just
-		// closes the dialog until that's wired up.
 
 		onOpenChange(false);
 	};
