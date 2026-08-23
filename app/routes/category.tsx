@@ -1,9 +1,16 @@
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 
 import { CategoryFormDialog } from "~/components/Category/CategoryFormDialog";
 import { DeleteCategoryDialog } from "~/components/Category/DeleteCategoryDialog";
+import { DeleteProductDialog } from "~/components/Product/DeleteProductDialog";
+import { EmptyProducts } from "~/components/Product/EmptyProducts";
+import { ProductDetailSheet } from "~/components/Product/ProductDetailSheet";
+import { ProductFormDialog } from "~/components/Product/ProductFormDialog";
+import { ProductGrid } from "~/components/Product/ProductGrid";
+import { ProductList } from "~/components/Product/ProductList";
+import { ProductViewToggle } from "~/components/Product/ProductViewToggle";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -12,6 +19,9 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useCategories } from "~/lib/categories-store";
+import type { Product } from "~/lib/mock-products";
+import { useProducts } from "~/lib/products-store";
+import { useProductViewMode } from "~/lib/use-product-view-mode";
 import type { Route } from "./+types/category";
 
 export function meta({ params }: Route.MetaArgs) {
@@ -30,6 +40,15 @@ export default function Category() {
 	const category = categories.find((c) => c.slug === slug);
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+	const { products, addProduct, updateProduct, removeProduct } = useProducts(
+		slug ?? "",
+	);
+	const [viewMode, setViewMode] = useProductViewMode();
+	const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+	const [editingProduct, setEditingProduct] = useState<Product | undefined>();
+	const [detailProduct, setDetailProduct] = useState<Product | undefined>();
+	const [deletingProduct, setDeletingProduct] = useState<Product | undefined>();
 
 	// Data loads client-side (Convex), so don't flash a "not found" error for a
 	// valid category while its query is still in flight.
@@ -59,7 +78,7 @@ export default function Category() {
 					<div>
 						<h1 className="text-2xl font-semibold">{category.label}</h1>
 						<p className="text-sm text-muted-foreground">
-							{category.count} products
+							{products.length} products
 						</p>
 					</div>
 				</div>
@@ -68,7 +87,7 @@ export default function Category() {
 						<Pencil />
 						Edit
 					</Button>
-					<Button variant="outline" onClick={() => setIsDeleteOpen(true)}>
+					<Button variant="destructive" onClick={() => setIsDeleteOpen(true)}>
 						<Trash2 />
 						Delete
 					</Button>
@@ -102,6 +121,34 @@ export default function Category() {
 				</DropdownMenu>
 			</div>
 
+			<div className="mt-6 flex items-center justify-between gap-4">
+				<ProductViewToggle mode={viewMode} onChange={setViewMode} />
+				<Button onClick={() => setIsAddProductOpen(true)}>
+					<Plus />
+					Add product
+				</Button>
+			</div>
+
+			<div className="mt-4">
+				{products.length === 0 ? (
+					<EmptyProducts onAdd={() => setIsAddProductOpen(true)} />
+				) : viewMode === "grid" ? (
+					<ProductGrid
+						products={products}
+						onOpen={setDetailProduct}
+						onEdit={setEditingProduct}
+						onDelete={setDeletingProduct}
+					/>
+				) : (
+					<ProductList
+						products={products}
+						onOpen={setDetailProduct}
+						onEdit={setEditingProduct}
+						onDelete={setDeletingProduct}
+					/>
+				)}
+			</div>
+
 			<CategoryFormDialog
 				mode="edit"
 				category={category}
@@ -114,6 +161,49 @@ export default function Category() {
 				open={isDeleteOpen}
 				onOpenChange={setIsDeleteOpen}
 				onDeleted={() => navigate("/")}
+			/>
+
+			<ProductFormDialog
+				mode="create"
+				open={isAddProductOpen}
+				onOpenChange={setIsAddProductOpen}
+				onSubmit={addProduct}
+			/>
+			<ProductFormDialog
+				mode="edit"
+				product={editingProduct}
+				open={editingProduct !== undefined}
+				onOpenChange={(open) => {
+					if (!open) setEditingProduct(undefined);
+				}}
+				onSubmit={(input) => {
+					if (editingProduct) updateProduct(editingProduct.id, input);
+				}}
+			/>
+			<ProductDetailSheet
+				product={detailProduct}
+				open={detailProduct !== undefined}
+				onOpenChange={(open) => {
+					if (!open) setDetailProduct(undefined);
+				}}
+				onEdit={() => {
+					if (detailProduct) setEditingProduct(detailProduct);
+					setDetailProduct(undefined);
+				}}
+				onDelete={() => {
+					if (detailProduct) setDeletingProduct(detailProduct);
+					setDetailProduct(undefined);
+				}}
+			/>
+			<DeleteProductDialog
+				product={deletingProduct}
+				open={deletingProduct !== undefined}
+				onOpenChange={(open) => {
+					if (!open) setDeletingProduct(undefined);
+				}}
+				onConfirm={() => {
+					if (deletingProduct) removeProduct(deletingProduct.id);
+				}}
 			/>
 		</main>
 	);

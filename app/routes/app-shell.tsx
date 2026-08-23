@@ -8,7 +8,7 @@ export default function AppShell() {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<main className="flex w-full flex-col">
+			<main className="flex w-full min-w-0 flex-col">
 				<Header />
 				<Outlet />
 			</main>
