@@ -1,4 +1,4 @@
-import { useAction } from "convex/react";
+﻿import { useAction } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -57,7 +57,7 @@ export function ProductExtractorTab({
 				message:
 					error instanceof Error
 						? error.message
-						: "Não foi possível extrair dados desta página",
+						: "Could not extract data from this page",
 			});
 		}
 	};
@@ -119,7 +119,7 @@ export function ProductExtractorTab({
 						{extractState.status === "loading" && (
 							<Loader2 className="size-4 animate-spin" />
 						)}
-						Extrair
+						Extract
 					</Button>
 				</div>
 			</Field>
@@ -171,14 +171,14 @@ export function ProductExtractorTab({
 							</ul>
 						)}
 					<Button type="button" onClick={handleUseExtractedData}>
-						Usar estes dados
+						Use this data
 					</Button>
 				</div>
 			)}
 
 			{extractState.status === "idle" && (
 				<p className="text-sm text-muted-foreground">
-					Cole a URL de uma página de produto e clique em &quot;Extrair&quot;.
+					Paste a product page URL and click "Extract".
 				</p>
 			)}
 		</>

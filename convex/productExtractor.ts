@@ -1,4 +1,4 @@
-"use node";
+﻿"use node";
 
 import Firecrawl from "@mendable/firecrawl-js";
 import { v } from "convex/values";
@@ -103,11 +103,11 @@ export const extract = action({
 			});
 			json = doc.json;
 		} catch {
-			throw new Error("Não foi possível extrair dados desta página");
+			throw new Error("Could not extract data from this page");
 		}
 
 		if (!json || typeof json !== "object") {
-			throw new Error("Não foi possível extrair dados desta página");
+			throw new Error("Could not extract data from this page");
 		}
 
 		const data = json as Record<string, unknown>;
