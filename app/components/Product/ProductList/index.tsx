@@ -1,7 +1,7 @@
-import { ProductCard } from "~/components/Product/ProductCard";
 import type { Product } from "~/lib/products-store";
+import { ProductRow } from "./ProductRow";
 
-export function ProductGrid({
+export function ProductList({
 	products,
 	onOpen,
 	onEdit,
@@ -13,9 +13,9 @@ export function ProductGrid({
 	onDelete: (product: Product) => void;
 }) {
 	return (
-		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+		<div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
 			{products.map((product) => (
-				<ProductCard
+				<ProductRow
 					key={product.id}
 					product={product}
 					onOpen={() => onOpen(product)}
