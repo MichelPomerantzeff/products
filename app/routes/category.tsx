@@ -1,4 +1,4 @@
-import { MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 
@@ -55,7 +55,7 @@ export default function Category() {
 
 	if (!category) {
 		return (
-			<main className="p-6">
+			<div>
 				<h1 className="text-2xl font-semibold">404</h1>
 				<p className="mt-2 text-muted-foreground">
 					The requested category could not be found.
@@ -63,12 +63,23 @@ export default function Category() {
 				<Button className="mt-4" render={<NavLink to="/" />}>
 					Back home
 				</Button>
-			</main>
+			</div>
 		);
 	}
 
 	return (
-		<main className="p-6">
+		<div>
+			<div className="flex items-center justify-between gap-2 mb-5">
+				<Button className="-ml-2.5" variant="ghost" render={<NavLink to="/" />}>
+					<ArrowLeft />
+					Back to categories
+				</Button>
+				<Button onClick={() => setIsAddProductOpen(true)}>
+					<Plus />
+					Add product
+				</Button>
+			</div>
+
 			<div className="flex items-center justify-between gap-4">
 				<div className="flex items-center gap-3">
 					<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
@@ -81,23 +92,12 @@ export default function Category() {
 						</p>
 					</div>
 				</div>
-				<div className="hidden items-center gap-2 md:flex">
-					<Button variant="outline" onClick={() => setIsEditOpen(true)}>
-						<Pencil />
-						Edit
-					</Button>
-					<Button variant="destructive" onClick={() => setIsDeleteOpen(true)}>
-						<Trash2 />
-						Delete
-					</Button>
-				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						render={
 							<Button
 								variant="outline"
 								size="icon"
-								className="md:hidden"
 								aria-label="Category actions"
 							/>
 						}
@@ -122,10 +122,6 @@ export default function Category() {
 
 			<div className="mt-6 flex items-center justify-between gap-4">
 				<ProductViewToggle mode={viewMode} onChange={setViewMode} />
-				<Button onClick={() => setIsAddProductOpen(true)}>
-					<Plus />
-					Add product
-				</Button>
 			</div>
 
 			<div className="mt-4">
@@ -204,6 +200,6 @@ export default function Category() {
 					if (deletingProduct) removeProduct(deletingProduct.id);
 				}}
 			/>
-		</main>
+		</div>
 	);
 }

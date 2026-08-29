@@ -1,17 +1,16 @@
 import { Outlet } from "react-router";
 
-import { AppSidebar } from "~/components/Layout/AppSidebar/AppSidebar";
 import { Header } from "~/components/Layout/Header/Header";
-import { SidebarProvider } from "~/components/ui/sidebar";
 
 export default function AppShell() {
 	return (
-		<SidebarProvider>
-			<AppSidebar />
-			<main className="flex w-full min-w-0 flex-col">
-				<Header />
-				<Outlet />
+		<div className="flex min-h-svh w-full flex-col">
+			<Header />
+			<main className="flex py-5">
+				<div className="flex-1 max-w-7xl mx-auto px-2">
+					<Outlet />
+				</div>
 			</main>
-		</SidebarProvider>
+		</div>
 	);
 }

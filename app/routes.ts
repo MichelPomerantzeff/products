@@ -10,8 +10,6 @@ export default [
 		layout("routes/app-shell.tsx", [
 			index("routes/home.tsx"),
 			route("categories/:slug", "routes/category.tsx"),
-			route("settings", "routes/settings.tsx"),
-			route("help", "routes/help.tsx"),
 		]),
 	]),
 	route("sign-in/*", "routes/sign-in.tsx"),
