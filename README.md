@@ -1,6 +1,11 @@
 # Product Extractor
 
-A React Router v8 app with categorized product organization and Clerk authentication.
+A React Router v8 app for organizing products into categories, with automatic
+product data extraction from a URL (via Firecrawl) and Clerk authentication.
+Backend and database are powered by [Convex](https://convex.dev/).
+
+For a deeper dive into the architecture, data model, and auth model, see
+[`docs/project-details.md`](./docs/project-details.md).
 
 ## Features
 
@@ -37,6 +42,10 @@ VITE_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
 ```
 
 This project also uses [Convex](https://convex.dev/) as its backend. Run `npx convex dev` in a separate terminal before (or alongside) `npm run dev` — it logs you in, connects the project, and writes `VITE_CONVEX_URL` into `.env.local` automatically on first run. Without it running, data-dependent pages won't load.
+
+To use the "extract from URL" feature on the product form, also set a
+`FIRECRAWL_API_KEY` environment variable on the **Convex deployment** (not
+the frontend `.env.local`) — e.g. `npx convex env set FIRECRAWL_API_KEY <key>`.
 
 ### Development
 
