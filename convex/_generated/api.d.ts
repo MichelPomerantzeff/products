@@ -8,19 +8,20 @@
  * @module
  */
 
-import type {
-	ApiFromModules,
-	FilterApi,
-	FunctionReference,
-} from "convex/server";
 import type * as categories from "../categories.js";
 import type * as productExtractor from "../productExtractor.js";
 import type * as products from "../products.js";
 
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
+
 declare const fullApi: ApiFromModules<{
-	categories: typeof categories;
-	productExtractor: typeof productExtractor;
-	products: typeof products;
+  categories: typeof categories;
+  productExtractor: typeof productExtractor;
+  products: typeof products;
 }>;
 
 /**
@@ -32,8 +33,8 @@ declare const fullApi: ApiFromModules<{
  * ```
  */
 export declare const api: FilterApi<
-	typeof fullApi,
-	FunctionReference<any, "public">
+  typeof fullApi,
+  FunctionReference<any, "public">
 >;
 
 /**
@@ -45,8 +46,8 @@ export declare const api: FilterApi<
  * ```
  */
 export declare const internal: FilterApi<
-	typeof fullApi,
-	FunctionReference<any, "internal">
+  typeof fullApi,
+  FunctionReference<any, "internal">
 >;
 
 export declare const components: {};

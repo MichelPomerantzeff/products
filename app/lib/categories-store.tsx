@@ -22,6 +22,7 @@ type CategoriesContextValue = {
 	categories: Category[];
 	isLoading: boolean;
 	addCategory: (input: CategoryInput) => void;
+	addManyCategories: (inputs: CategoryInput[]) => Promise<{ created: number }>;
 	updateCategory: (
 		id: Id<"categories">,
 		input: CategoryInput,
@@ -31,7 +32,7 @@ type CategoriesContextValue = {
 
 const DEFAULT_ICON = categoryIcons[0].icon;
 
-function resolveIcon(iconName: string): LucideIcon {
+export function resolveIcon(iconName: string): LucideIcon {
 	return (
 		categoryIcons.find((option) => option.name === iconName)?.icon ??
 		DEFAULT_ICON
@@ -48,6 +49,7 @@ export function CategoriesProvider({
 	const rawCategories = useQuery(api.categories.list);
 	const isLoading = rawCategories === undefined;
 	const createCategory = useMutation(api.categories.create);
+	const createManyCategories = useMutation(api.categories.createMany);
 	const patchCategory = useMutation(api.categories.update);
 	const deleteCategory = useMutation(api.categories.remove);
 
@@ -72,6 +74,17 @@ export function CategoriesProvider({
 		[createCategory],
 	);
 
+	const addManyCategories = useCallback(
+		(inputs: CategoryInput[]) => {
+			const cleaned = inputs
+				.map(({ label, iconName }) => ({ label: label.trim(), iconName }))
+				.filter((input) => input.label);
+			if (cleaned.length === 0) return Promise.resolve({ created: 0 });
+			return createManyCategories({ categories: cleaned });
+		},
+		[createManyCategories],
+	);
+
 	const updateCategory = useCallback(
 		async (id: Id<"categories">, { label, iconName }: CategoryInput) => {
 			const trimmedLabel = label.trim();
@@ -93,10 +106,18 @@ export function CategoriesProvider({
 			categories,
 			isLoading,
 			addCategory,
+			addManyCategories,
 			updateCategory,
 			removeCategory,
 		}),
-		[categories, isLoading, addCategory, updateCategory, removeCategory],
+		[
+			categories,
+			isLoading,
+			addCategory,
+			addManyCategories,
+			updateCategory,
+			removeCategory,
+		],
 	);
 
 	return (

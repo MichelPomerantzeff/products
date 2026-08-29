@@ -48,6 +48,49 @@ export const create = mutation({
 	},
 });
 
+export const createMany = mutation({
+	args: {
+		categories: v.array(
+			v.object({
+				label: v.string(),
+				iconName: v.string(),
+			}),
+		),
+	},
+	handler: async (ctx, { categories }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error("Not authenticated");
+
+		const existing = await ctx.db
+			.query("categories")
+			.withIndex("by_user", (q) => q.eq("userId", identity.subject))
+			.collect();
+
+		const usedSlugs = new Set(existing.map((category) => category.slug));
+
+		let created = 0;
+		for (const { label, iconName } of categories) {
+			const trimmedLabel = label.trim();
+			if (!trimmedLabel) continue;
+
+			const slug = slugify(trimmedLabel);
+			if (!slug || usedSlugs.has(slug)) continue;
+			usedSlugs.add(slug);
+
+			await ctx.db.insert("categories", {
+				userId: identity.subject,
+				slug,
+				label: trimmedLabel,
+				iconName,
+				count: 0,
+			});
+			created++;
+		}
+
+		return { created };
+	},
+});
+
 export async function requireOwnedCategory(
 	ctx: QueryCtx,
 	id: Id<"categories">,

@@ -9,15 +9,15 @@
  */
 
 import {
-	ActionBuilder,
-	GenericActionCtx,
-	GenericDatabaseReader,
-	GenericDatabaseWriter,
-	GenericMutationCtx,
-	GenericQueryCtx,
-	HttpActionBuilder,
-	MutationBuilder,
-	QueryBuilder,
+  ActionBuilder,
+  HttpActionBuilder,
+  MutationBuilder,
+  QueryBuilder,
+  GenericActionCtx,
+  GenericMutationCtx,
+  GenericQueryCtx,
+  GenericDatabaseReader,
+  GenericDatabaseWriter,
 } from "convex/server";
 import type { DataModel } from "./dataModel.js";
 
@@ -28,9 +28,9 @@ import type { DataModel } from "./dataModel.js";
  * `convex.config.ts`.
  */
 type Env = {
-	readonly CONVEX_CLOUD_URL: string;
-	readonly CONVEX_SITE_URL: string;
-	readonly FIRECRAWL_API_KEY: string | undefined;
+  readonly CONVEX_CLOUD_URL: string;
+  readonly CONVEX_SITE_URL: string;
+  readonly FIRECRAWL_API_KEY: string | undefined;
 };
 
 /**
