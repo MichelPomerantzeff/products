@@ -1,4 +1,11 @@
-import { MoreVertical, Pencil, ShoppingBag, Trash2 } from "lucide-react";
+import {
+	ArrowLeftRight,
+	Heart,
+	MoreVertical,
+	Pencil,
+	ShoppingBag,
+	Trash2,
+} from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -33,13 +40,13 @@ export function ProductCard({
 			<button
 				type="button"
 				onClick={onOpen}
-				className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-muted"
+				className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-muted border-b"
 			>
 				{product.imageUrl ? (
 					<img
 						src={product.imageUrl}
 						alt=""
-						className="size-full object-cover transition-transform group-hover/card:scale-105"
+						className="size-full object-cover transition-transform hover:scale-105 cursor-pointer"
 					/>
 				) : (
 					<ShoppingBag className="size-8 text-muted-foreground" />
@@ -52,7 +59,7 @@ export function ProductCard({
 				{product.availability && (
 					<Badge
 						variant={availabilityBadgeVariant[product.availability]}
-						className="absolute bottom-2 left-2 bg-popover/90"
+						className="absolute bottom-2 left-2"
 					>
 						{availabilityLabels[product.availability]}
 					</Badge>
@@ -60,11 +67,36 @@ export function ProductCard({
 			</button>
 
 			<div className="flex flex-1 flex-col gap-1.5 p-3">
-				<p className="text-xs text-muted-foreground">{product.source}</p>
+				<div className="flex items-center justify-between">
+					<p className="text-xs text-muted-foreground">{product.source}</p>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									variant="ghost"
+									size="icon-sm"
+									aria-label="Product actions"
+								/>
+							}
+						>
+							<MoreVertical />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={onEdit}>
+								<Pencil />
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuItem variant="destructive" onClick={onDelete}>
+								<Trash2 />
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 				<button
 					type="button"
 					onClick={onOpen}
-					className="line-clamp-2 text-left font-medium hover:underline"
+					className="line-clamp-2 text-left font-medium cursor-pointer hover:underline mr-auto"
 				>
 					{product.name}
 				</button>
@@ -79,31 +111,24 @@ export function ProductCard({
 					)}
 				</div>
 			</div>
-
-			<DropdownMenu>
-				<DropdownMenuTrigger
-					render={
-						<Button
-							variant="outline"
-							size="icon-sm"
-							className="absolute top-2 right-2 bg-popover/90"
-							aria-label="Product actions"
-						/>
-					}
+			<div className="flex items-center gap-3 p-3">
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					className="p-0 size-fit hover:bg-transparent hover:text-destructive gap-1"
 				>
-					<MoreVertical />
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuItem onClick={onEdit}>
-						<Pencil />
-						Edit
-					</DropdownMenuItem>
-					<DropdownMenuItem variant="destructive" onClick={onDelete}>
-						<Trash2 />
-						Delete
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
+					<Heart />
+					Favorite
+				</Button>
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					className="p-0 size-fit hover:bg-transparent hover:text-primary gap-1"
+				>
+					<ArrowLeftRight />
+					Compare
+				</Button>
+			</div>
 		</div>
 	);
 }
