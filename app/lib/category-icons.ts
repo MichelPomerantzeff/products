@@ -1,8 +1,14 @@
 import {
 	Armchair,
+	Baby,
 	Backpack,
+	Bath,
+	BedDouble,
 	Book,
+	Boxes,
+	Briefcase,
 	Car,
+	CookingPot,
 	Cpu,
 	Dumbbell,
 	Folder,
@@ -20,9 +26,13 @@ import {
 	Shirt,
 	ShoppingBag,
 	Smartphone,
+	Sofa,
+	Sparkles,
 	Speaker,
 	Tag,
+	Tent,
 	Utensils,
+	Watch,
 } from "lucide-react";
 
 export type CategoryIconOption = {
@@ -54,4 +64,14 @@ export const categoryIcons: CategoryIconOption[] = [
 	{ name: "Pets", icon: PawPrint },
 	{ name: "Gifts", icon: Gift },
 	{ name: "Health", icon: Heart },
+	{ name: "Briefcase", icon: Briefcase },
+	{ name: "BedDouble", icon: BedDouble },
+	{ name: "CookingPot", icon: CookingPot },
+	{ name: "Boxes", icon: Boxes },
+	{ name: "Sofa", icon: Sofa },
+	{ name: "Bath", icon: Bath },
+	{ name: "Watch", icon: Watch },
+	{ name: "Sparkles", icon: Sparkles },
+	{ name: "Baby", icon: Baby },
+	{ name: "Tent", icon: Tent },
 ];
