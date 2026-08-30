@@ -48,6 +48,7 @@ export default function Category() {
 	const [editingProduct, setEditingProduct] = useState<Product | undefined>();
 	const [detailProduct, setDetailProduct] = useState<Product | undefined>();
 	const [deletingProduct, setDeletingProduct] = useState<Product | undefined>();
+	const hasProducts = products.length > 0;
 
 	// Data loads client-side (Convex), so don't flash a "not found" error for a
 	// valid category while its query is still in flight.
@@ -74,10 +75,12 @@ export default function Category() {
 					<ArrowLeft />
 					Back to categories
 				</Button>
-				<Button onClick={() => setIsAddProductOpen(true)}>
-					<Plus />
-					Add product
-				</Button>
+				{hasProducts && (
+					<Button onClick={() => setIsAddProductOpen(true)}>
+						<Plus />
+						Add product
+					</Button>
+				)}
 			</div>
 
 			<div className="flex items-center justify-between gap-4">
@@ -125,7 +128,7 @@ export default function Category() {
 			</div>
 
 			<div className="mt-4">
-				{products.length === 0 ? (
+				{!hasProducts ? (
 					<EmptyProducts onAdd={() => setIsAddProductOpen(true)} />
 				) : viewMode === "grid" ? (
 					<ProductGrid
