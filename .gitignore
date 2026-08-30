@@ -2,8 +2,6 @@
 .env
 .env.local
 /node_modules/
-
-# React Router
 /.react-router/
 /build/
 
@@ -11,8 +9,5 @@
 /.netlify/
 
 # Clerk, Claude, and Agents
-/.clerk/
-.claude/
 .agents
-CONTEXT.md
-/docs/
+.claude/
